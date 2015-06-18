@@ -1,0 +1,9 @@
+name: BulkExport
+main: BulkExport.BulkExport
+version: 0.0.1-SNAPSHOT
+commands:
+    export:
+        description: Open the export screen
+        usage: /export
+        permission: bulkexport.export
+        permission-message: You need the bulkexport.export permission to use this command
