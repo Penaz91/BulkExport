@@ -44,24 +44,43 @@ public class BulkExport extends JavaPlugin{
     }
     public static void Handle(Player player){
     	int full=0;
-    	HashMap<Integer, ? extends ItemStack> mats=exportchest.all(Material.STONE);
+    	Exportable Stone=new Exportable(1,new ItemStack(Material.STONE),64,1,new ItemStack(Material.PAPER),2);
+    	HashMap<Integer, ? extends ItemStack> mats=exportchest.all(Stone.getTrade().getType());
     	Set<Integer> keys= mats.keySet();
+    	ItemStack[] contents=exportchest.getContents();
     	HashMap<Integer, ItemStack> toreturn=new HashMap<Integer, ItemStack>();
-    	for (Integer key:keys){
-    		if (mats.get(key).getAmount()==64){
-    			full=full+1;
-    		}else{
-    			toreturn.put(key, mats.get(key));
+    	boolean dirty=false;
+    	for (int i=0;i<contents.length;i++){
+    		if ((contents[i]!=null) && (!(contents[i].isSimilar(contents[0])))){
+    			PlayerInventory pi=player.getInventory();
+    			for (ItemStack item:contents){
+    				if (item!=null){
+    					pi.addItem(item);
+    				}
+    			}
+    			exportchest.clear();
+    			dirty=true;
+    			player.sendMessage("All the items must be of the same Type");
+    			break;
     		}
     	}
-    	PlayerInventory pi=player.getInventory();
-    	if (!(toreturn.isEmpty())){
-    		Set<Integer> keys1=toreturn.keySet();
-    		for (Integer key:keys1){
-    			pi.addItem(toreturn.get(key));
+    	if (!dirty){
+    		for (Integer key:keys){
+    			if ((mats.get(key).isSimilar(Stone.getTrade()))&&(mats.get(key).getAmount()==Stone.getStackSize())){
+    				full=full+1;
+    			}else{
+    				toreturn.put(key, mats.get(key));
+    			}
     		}
+    		PlayerInventory pi=player.getInventory();
+    		if (!(toreturn.isEmpty())){
+    			Set<Integer> keys1=toreturn.keySet();
+    			for (Integer key:keys1){
+    				pi.addItem(toreturn.get(key));
+    			}
+    		}
+    		pi.addItem(new ItemStack(Stone.getTraded().getType(),full));
     	}
-    	pi.addItem(new ItemStack(Material.PAPER,full));
     	exportchest.clear();
     }
 }
