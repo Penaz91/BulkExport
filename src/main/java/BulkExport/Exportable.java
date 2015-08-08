@@ -1,14 +1,12 @@
 package BulkExport;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
-public class Exportable implements Serializable, ConfigurationSerializable {
-	private static final long serialVersionUID = 159754163929751635L;
+public class Exportable implements ConfigurationSerializable {
 	int ID;
 	ItemStack trade;
 	int StackSize;
@@ -61,7 +59,7 @@ public class Exportable implements Serializable, ConfigurationSerializable {
 	public void setNumStacks(int stacks){
 		this.NumStacks=stacks;
 	}
-	public void SetTraded(ItemStack itemtraded){
+	public void setTraded(ItemStack itemtraded){
 		this.traded=itemtraded;
 	}
 	public void setNumTraded(int numreturn){
@@ -91,7 +89,22 @@ public class Exportable implements Serializable, ConfigurationSerializable {
 		serial.put("NumTraded", this.NumTraded);
 		return serial;
 	}
-	public Exportable deserialize(Map <String,Object> input){
-		return new Exportable(Integer.parseInt(input.get("ID").toString()),(ItemStack) input.get("trade"),Integer.parseInt(input.get("StackSize").toString()),Integer.parseInt(input.get("NumStacks").toString()),(ItemStack) input.get("traded"),Integer.parseInt(input.get("NumTraded").toString()));
+	public Exportable(Map <String,Object> args){
+		ID=(Integer.parseInt(args.get("ID").toString()));
+		trade=((ItemStack) args.get("trade"));
+		StackSize=(Integer.parseInt(args.get("StackSize").toString()));
+		NumStacks=(Integer.parseInt(args.get("NumStacks").toString()));
+		traded=((ItemStack) args.get("traded"));
+		NumTraded=(Integer.parseInt(args.get("NumTraded").toString()));
+	}
+	public static Exportable deserialize(Map <String,Object> args){
+		Exportable toret = new Exportable();
+		toret.setID(Integer.parseInt(args.get("ID").toString()));
+		toret.setTrade((ItemStack) args.get("trade"));
+		toret.setStackSize(Integer.parseInt(args.get("StackSize").toString()));
+		toret.setNumStacks(Integer.parseInt(args.get("NumStacks").toString()));
+		toret.setTraded((ItemStack) args.get("traded"));
+		toret.setNumTraded(Integer.parseInt(args.get("NumTraded").toString()));
+		return toret;
 	}
 }

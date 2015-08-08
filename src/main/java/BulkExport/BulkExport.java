@@ -1,15 +1,11 @@
 package BulkExport;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,7 +17,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.yaml.snakeyaml.Yaml;
 
 public class BulkExport extends JavaPlugin{
 	static Inventory exportchest=null;
@@ -33,21 +28,10 @@ public class BulkExport extends JavaPlugin{
 		ConfigurationSerialization.registerClass(Exportable.class);
 		exportchest=Bukkit.getServer().createInventory(null, 54);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
-		/*items.add(new Exportable(1,new ItemStack(Material.STONE),64,1,new ItemStack(Material.PAPER),1));
-		items.add(new Exportable(2,new ItemStack(Material.CARROT_ITEM),64,1,new ItemStack(Material.PAPER),1));*/
-		/*Yaml yaml=new Yaml();
-		FileInputStream customfile=null;
-		try {
-			customfile = new FileInputStream(new File(getDataFolder(),"items.yml"));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		items=new ArrayList((yaml.loadAs(customfile,java.util.LinkedHashMap.class)).keySet());*/
 		File customfile = new File(getDataFolder(),"items.yml");
 		FileConfiguration customyml=YamlConfiguration.loadConfiguration(customfile);
 		items=(ArrayList<Exportable>) customyml.get("0");
-		getLogger().info("Items: " +items);
+		getLogger().info("Items:" +items);
     }
     @Override
     public void onDisable() {
@@ -55,12 +39,6 @@ public class BulkExport extends JavaPlugin{
     	HandlerList.unregisterAll(this);
     	File customfile = new File(getDataFolder(),"items.yml");
 		FileConfiguration customyml=YamlConfiguration.loadConfiguration(customfile);
-		/*Integer i=0;
-		for (Exportable item:items){
-			customyml.createSection(i.toString());
-			customyml.set(i.toString(),item);
-			i=i+1;
-		}*/
 		customyml.createSection("0");
 		customyml.set("0",items);
 		try{
@@ -68,17 +46,6 @@ public class BulkExport extends JavaPlugin{
 		} catch (IOException e){
 			getLogger().info("Unable to save items.yml");
 		}
-		/*Map<String, Object> map=customyml.getValues(false);
-		if (map.get(args[0])==null){
-			customyml.createSection(args[0]);
-			customyml.set(args[0],i);
-		}else{
-			customyml.set(args[0], i);
-		}
-		try {
-			customyml.save(customfile);
-		} catch (IOException e) {
-			sender.sendMessage("Unable to save item, items.yml not found");*/
     }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -136,7 +103,13 @@ public class BulkExport extends JavaPlugin{
     				pi.addItem(toreturn.get(key));
     			}
     		}
-    		pi.addItem(new ItemStack(itemfound.getTraded().getType(),full));
+    		if (full%itemfound.getNumStacks()==0){
+    			pi.addItem(new ItemStack(itemfound.getTraded().getType(),(full*itemfound.getNumTraded())/itemfound.getNumStacks()));
+    		}else{
+    			pi.addItem(new ItemStack(itemfound.getTraded().getType(),((full-1)*itemfound.getNumTraded())/itemfound.getNumStacks()));
+    			itemfound.getTrade().setAmount(64*(full%itemfound.getNumStacks()));
+    			pi.addItem(itemfound.getTrade());
+    		}
     	}
     	exportchest.clear();
     }
