@@ -22,15 +22,25 @@ public class BulkExport extends JavaPlugin{
 	static Inventory exportchest=null;
 	File Datafolder = getDataFolder();
 	static ArrayList<Exportable> items=new ArrayList<Exportable>();
+	static Exportable temp=new Exportable();
 	@Override
     public void onEnable() {
 		getLogger().info("BulkExport has been enabled");
+		File f = getDataFolder();
+		if (!f.exists()){
+			f.mkdir();
+			saveResource("config.yml", false);
+			saveResource("items.yml",false);
+		}
 		ConfigurationSerialization.registerClass(Exportable.class);
 		exportchest=Bukkit.getServer().createInventory(null, 54);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		File customfile = new File(getDataFolder(),"items.yml");
 		FileConfiguration customyml=YamlConfiguration.loadConfiguration(customfile);
 		items=(ArrayList<Exportable>) customyml.get("0");
+		if (items==null){
+			items=new ArrayList<Exportable>();
+		}
 		getLogger().info("Items:" +items);
     }
     @Override
@@ -57,7 +67,38 @@ public class BulkExport extends JavaPlugin{
     			player.openInventory(exportchest);
     		}
     		return true;
-    	} //If this has happened the function will return true. 
+    	} else{
+    		if (cmd.getName().equalsIgnoreCase("CreateTrade")) {
+    			if (!(sender instanceof Player)) {
+        			sender.sendMessage("This command can only be run by a player.");
+        		} else {
+        			temp.setNumStacks(Integer.parseInt(args[0]));
+        			temp.setNumTraded(Integer.parseInt(args[1]));
+        			Player player=(Player) sender;
+        			PlayerInventory pi=player.getInventory();
+        			temp.setStackSize(pi.getItem(pi.getHeldItemSlot()).getMaxStackSize());
+        			temp.setTrade(pi.getItem(pi.getHeldItemSlot()));
+        			sender.sendMessage("Select the item to trade to and then run /finishtrade");
+        		}
+    			return true;
+    		}else{
+    			
+    		}if (cmd.getName().equalsIgnoreCase("FinishTrade")) {
+    			if (!(sender instanceof Player)) {
+        			sender.sendMessage("This command can only be run by a player.");
+        		} else {
+        			Player player=(Player) sender;
+        			PlayerInventory pi=player.getInventory();
+        			temp.setTraded(pi.getItem(pi.getHeldItemSlot()));
+        			getLogger().info(temp.toString());
+        			getLogger().info(items.toString());
+        			items.add(temp);
+        			sender.sendMessage("Trade creation finished.");
+        		}
+    			return true;
+    		}
+    		//If this has happened the function will return true. 
+    	}
             // If this hasn't happened the value of false will be returned.
     	return false;
     }
@@ -104,9 +145,13 @@ public class BulkExport extends JavaPlugin{
     			}
     		}
     		if (full%itemfound.getNumStacks()==0){
-    			pi.addItem(new ItemStack(itemfound.getTraded().getType(),(full*itemfound.getNumTraded())/itemfound.getNumStacks()));
+    			//pi.addItem(new ItemStack(itemfound.getTraded().getType(),(full*itemfound.getNumTraded())/itemfound.getNumStacks()));
+    			itemfound.getTraded().setAmount((full*itemfound.getNumTraded()/itemfound.getNumStacks()));
+    			pi.addItem(itemfound.getTraded());
     		}else{
-    			pi.addItem(new ItemStack(itemfound.getTraded().getType(),((full-1)*itemfound.getNumTraded())/itemfound.getNumStacks()));
+    			//pi.addItem(new ItemStack(itemfound.getTraded().getType(),((full-1)*itemfound.getNumTraded())/itemfound.getNumStacks()));
+    			itemfound.getTraded().setAmount(((full-1)*itemfound.getNumTraded()/itemfound.getNumStacks()));
+    			pi.addItem(itemfound.getTraded());
     			itemfound.getTrade().setAmount(64*(full%itemfound.getNumStacks()));
     			pi.addItem(itemfound.getTrade());
     		}

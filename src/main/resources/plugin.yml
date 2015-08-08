@@ -7,3 +7,13 @@ commands:
         usage: /export
         permission: bulkexport.export
         permission-message: You need the bulkexport.export permission to use this command
+    createtrade:
+        description: Starts the creation of a new trade voice
+        usage: /createtrade <Trading_Stacks> <Traded_Items> (while holding in hand the trading item)
+        permission: bulkexport.createtrade
+        permission-message: You need the bulkexport.createtrade permission to use this command
+    finishtrade:
+        description: Starts the creation of a new trade voice
+        usage: /finishtrade (while holding in hand the traded item)
+        permission: bulkexport.finishtrade
+        permission-message: You need the bulkexport.finishtrade permission to use this command
