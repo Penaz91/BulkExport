@@ -93,6 +93,23 @@ public class BulkExport extends JavaPlugin{
         			getLogger().info(temp.toString());
         			getLogger().info(items.toString());
         			items.add(temp);
+        			sender.sendMessage("Saving trades.");
+        			File customfile = new File(getDataFolder(),"items.yml");
+        			FileConfiguration customyml=YamlConfiguration.loadConfiguration(customfile);
+        			customyml.createSection("0");
+        			customyml.set("0",items);
+        			try{
+        				customyml.save(customfile);
+        			} catch (IOException e){
+        				getLogger().info("Unable to save items.yml");
+        			}
+        			sender.sendMessage("Reloading trades.");
+        			customfile = new File(getDataFolder(),"items.yml");
+        			customyml=YamlConfiguration.loadConfiguration(customfile);
+        			items=(ArrayList<Exportable>) customyml.get("0");
+        			if (items==null){
+        				items=new ArrayList<Exportable>();
+        			}
         			sender.sendMessage("Trade creation finished.");
         		}
     			return true;
