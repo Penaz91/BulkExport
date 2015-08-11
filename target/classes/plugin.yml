@@ -17,3 +17,8 @@ commands:
         usage: /finishtrade (while holding in hand the traded item)
         permission: bulkexport.finishtrade
         permission-message: You need the bulkexport.finishtrade permission to use this command
+    trades:
+        description: Shows the available tradeable items list
+        usage: /trades
+        permission: bulkexport.trades
+        permission-message: You need the bulkexport.trades permission to use this command

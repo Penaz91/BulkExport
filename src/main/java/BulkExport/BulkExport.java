@@ -85,7 +85,7 @@ public class BulkExport extends JavaPlugin{
     			
     		}if (cmd.getName().equalsIgnoreCase("FinishTrade")) {
     			if (!(sender instanceof Player)) {
-        			sender.sendMessage("This command can only be run by a player.");
+    				sender.sendMessage("This command can only be run by a player.");
         		} else {
         			Player player=(Player) sender;
         			PlayerInventory pi=player.getInventory();
@@ -113,6 +113,23 @@ public class BulkExport extends JavaPlugin{
         			sender.sendMessage("Trade creation finished.");
         		}
     			return true;
+    		} else {
+    			if (cmd.getName().equalsIgnoreCase("Trades")) {
+    				if (!(sender instanceof Player)){
+    					sender.sendMessage("This command can only be run by a player.");
+    				}else{
+    					sender.sendMessage("These are the trades available:");
+    					String toret="";
+    					for (Exportable trade:items){
+    						if (trade.getTrade().hasItemMeta()){
+    							toret+=trade.getTrade().getItemMeta().getDisplayName().toString()+", ";
+    						}else{
+    							toret+=trade.getTrade().getType().toString()+", ";
+    						}
+    					}
+    					sender.sendMessage(toret);
+    				} return true;
+    			}
     		}
     		//If this has happened the function will return true. 
     	}
@@ -145,34 +162,42 @@ public class BulkExport extends JavaPlugin{
     				itemfound=item;
     			}
     		}
-    		HashMap<Integer, ? extends ItemStack> mats=exportchest.all(itemfound.getTrade().getType());
-    		Set<Integer> keys= mats.keySet();
-    		for (Integer key:keys){
-    			if ((mats.get(key).isSimilar(itemfound.getTrade()))&&(mats.get(key).getAmount()==itemfound.getStackSize())){
-    				full=full+1;
-    			}else{
-    				toreturn.put(key, mats.get(key));
-    			}
-    		}
-    		PlayerInventory pi=player.getInventory();
-    		if (!(toreturn.isEmpty())){
-    			Set<Integer> keys1=toreturn.keySet();
-    			for (Integer key:keys1){
-    				pi.addItem(toreturn.get(key));
-    			}
-    		}
-    		if (full%itemfound.getNumStacks()==0){
-    			//pi.addItem(new ItemStack(itemfound.getTraded().getType(),(full*itemfound.getNumTraded())/itemfound.getNumStacks()));
-    			itemfound.getTraded().setAmount((full*itemfound.getNumTraded()/itemfound.getNumStacks()));
-    			pi.addItem(itemfound.getTraded());
-    		}else{
-    			//pi.addItem(new ItemStack(itemfound.getTraded().getType(),((full-1)*itemfound.getNumTraded())/itemfound.getNumStacks()));
-    			itemfound.getTraded().setAmount(((full-1)*itemfound.getNumTraded()/itemfound.getNumStacks()));
-    			pi.addItem(itemfound.getTraded());
-    			itemfound.getTrade().setAmount(64*(full%itemfound.getNumStacks()));
-    			pi.addItem(itemfound.getTrade());
-    		}
+    		if (itemfound==null){
+				for (ItemStack itm:contents){
+					PlayerInventory pi=player.getInventory();
+					if (itm!=null){
+						pi.addItem(itm);
+					}
+				}
+				player.sendMessage("Sorry, but no trades are available for these items, see /trades");
+			}else{
+				HashMap<Integer, ? extends ItemStack> mats=exportchest.all(itemfound.getTrade().getType());
+				Set<Integer> keys= mats.keySet();
+				for (Integer key:keys){
+					if ((mats.get(key).isSimilar(itemfound.getTrade()))&&(mats.get(key).getAmount()==itemfound.getStackSize())){
+						full=full+1;
+					}else{
+						toreturn.put(key, mats.get(key));
+					}
+				}
+				PlayerInventory pi=player.getInventory();
+				if (!(toreturn.isEmpty())){
+					Set<Integer> keys1=toreturn.keySet();
+					for (Integer key:keys1){
+						pi.addItem(toreturn.get(key));
+					}
+				}
+				if (full%itemfound.getNumStacks()==0){
+					itemfound.getTraded().setAmount((full*itemfound.getNumTraded()/itemfound.getNumStacks()));
+					pi.addItem(itemfound.getTraded());
+				}else{
+					itemfound.getTraded().setAmount(((full-1)*itemfound.getNumTraded()/itemfound.getNumStacks()));
+					pi.addItem(itemfound.getTraded());
+					itemfound.getTrade().setAmount(64*(full%itemfound.getNumStacks()));
+					pi.addItem(itemfound.getTrade());
+				}
+			}
+    		exportchest.clear();
     	}
-    	exportchest.clear();
     }
 }
