@@ -19,13 +19,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class BulkExport extends JavaPlugin{
-	static Inventory exportchest=null;
+	static HashMap<String,Inventory> _chests; 
+	//static Inventory exportchest=null;
 	File Datafolder = getDataFolder();
 	static ArrayList<Exportable> items=new ArrayList<Exportable>();
 	static Exportable temp=new Exportable();
 	@Override
     public void onEnable() {
 		getLogger().info("BulkExport has been enabled");
+		_chests=new HashMap<String,Inventory>();
 		File f = getDataFolder();
 		if (!f.exists()){
 			f.mkdir();
@@ -33,7 +35,7 @@ public class BulkExport extends JavaPlugin{
 			saveResource("items.yml",false);
 		}
 		ConfigurationSerialization.registerClass(Exportable.class);
-		exportchest=Bukkit.getServer().createInventory(null, 54);
+		//exportchest=Bukkit.getServer().createInventory(null, 54);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		File customfile = new File(getDataFolder(),"items.yml");
 		FileConfiguration customyml=YamlConfiguration.loadConfiguration(customfile);
@@ -56,6 +58,7 @@ public class BulkExport extends JavaPlugin{
 		} catch (IOException e){
 			getLogger().info("Unable to save items.yml");
 		}
+		_chests=null;
     }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -64,7 +67,8 @@ public class BulkExport extends JavaPlugin{
     			sender.sendMessage("This command can only be run by a player.");
     		} else {
     			Player player = (Player) sender;
-    			player.openInventory(exportchest);
+    			_chests.put(player.getName(), Bukkit.getServer().createInventory(player, 54));
+    			player.openInventory(_chests.get(player.getName()));
     		}
     		return true;
     	} else{
@@ -138,7 +142,7 @@ public class BulkExport extends JavaPlugin{
     }
     public static void Handle(Player player){
     	int full=0;
-    	ItemStack[] contents=exportchest.getContents();
+    	ItemStack[] contents=_chests.get(player.getName()).getContents();
     	HashMap<Integer, ItemStack> toreturn=new HashMap<Integer, ItemStack>();
     	boolean dirty=false;
     	for (int i=0;i<contents.length;i++){
@@ -149,7 +153,7 @@ public class BulkExport extends JavaPlugin{
     					pi.addItem(item);
     				}
     			}
-    			exportchest.clear();
+    			_chests.get(player.getName()).clear();
     			dirty=true;
     			player.sendMessage("All the items must be of the same Type");
     			break;
@@ -171,7 +175,7 @@ public class BulkExport extends JavaPlugin{
 				}
 				player.sendMessage("Sorry, but no trades are available for these items, see /trades");
 			}else{
-				HashMap<Integer, ? extends ItemStack> mats=exportchest.all(itemfound.getTrade().getType());
+				HashMap<Integer, ? extends ItemStack> mats=_chests.get(player.getName()).all(itemfound.getTrade().getType());
 				Set<Integer> keys= mats.keySet();
 				for (Integer key:keys){
 					if ((mats.get(key).isSimilar(itemfound.getTrade()))&&(mats.get(key).getAmount()==itemfound.getStackSize())){
@@ -197,7 +201,7 @@ public class BulkExport extends JavaPlugin{
 					pi.addItem(itemfound.getTrade());
 				}
 			}
-    		exportchest.clear();
+    		_chests.get(player.getName()).clear();
     	}
     }
 }
