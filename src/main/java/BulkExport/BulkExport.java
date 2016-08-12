@@ -24,6 +24,7 @@ public class BulkExport extends JavaPlugin{
 	File Datafolder = getDataFolder();
 	static ArrayList<Exportable> items=new ArrayList<Exportable>();
 	static Exportable temp=new Exportable();
+	@SuppressWarnings("unchecked")
 	@Override
     public void onEnable() {
 		getLogger().info("BulkExport has been enabled");
@@ -60,7 +61,8 @@ public class BulkExport extends JavaPlugin{
 		}
 		_chests=null;
     }
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     	if (cmd.getName().equalsIgnoreCase("export")) { // If the player typed /basic then do the following...
     		if (!(sender instanceof Player)) {
