@@ -38,13 +38,15 @@ public class BulkExport extends JavaPlugin{
 		ConfigurationSerialization.registerClass(Exportable.class);
 		//exportchest=Bukkit.getServer().createInventory(null, 54);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+		getServer().getPluginManager().registerEvents(new playerLoginListener(), this);
+		getServer().getPluginManager().registerEvents(new playerLogoutListener(), this);
 		File customfile = new File(getDataFolder(),"items.yml");
 		FileConfiguration customyml=YamlConfiguration.loadConfiguration(customfile);
 		items=(ArrayList<Exportable>) customyml.get("0");
 		if (items==null){
 			items=new ArrayList<Exportable>();
 		}
-		getLogger().info("Items:" +items);
+		//getLogger().info("Items:" +items);
     }
     @Override
     public void onDisable() {
