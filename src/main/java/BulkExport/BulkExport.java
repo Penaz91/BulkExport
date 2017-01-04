@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import net.milkbowl.vault.item.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.Command;
@@ -130,12 +132,23 @@ public class BulkExport extends JavaPlugin{
     					String toret="";
     					for (Exportable trade:items){
     						if (trade.getTrade().hasItemMeta()){
-    							toret+=trade.getTrade().getItemMeta().getDisplayName().toString()+", ";
+    							if (trade.getTraded().hasItemMeta()){
+    								// Doppio Nome Custom
+    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + trade.getTrade().getItemMeta().getDisplayName() + " for " + trade.getNumTraded() + " " + trade.getTraded().getItemMeta().getDisplayName());
+    							}else{
+    								// Nome custom solo Trade
+    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + trade.getTrade().getItemMeta().getDisplayName() + " for " + trade.getNumTraded() + " " + Items.itemByStack(trade.getTraded()).getName());
+    							}
     						}else{
-    							toret+=trade.getTrade().getType().toString()+", ";
+    							if (trade.getTraded().hasItemMeta()){
+    								// Nome Custom Solo Traded
+    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + Items.itemByStack(trade.getTrade()) + " for " + trade.getNumTraded() + " " + trade.getTraded().getItemMeta().getDisplayName());
+    							}else{
+    								// No Nome Custom
+    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + Items.itemByStack(trade.getTrade()) + " for " + trade.getNumTraded() + " " + Items.itemByStack(trade.getTraded()).getName());
+    							}
     						}
     					}
-    					sender.sendMessage(toret);
     				} return true;
     			}
     		}
@@ -196,9 +209,13 @@ public class BulkExport extends JavaPlugin{
 					}
 				}
 				if (full%itemfound.getNumStacks()==0){
-					itemfound.getTraded().setAmount((full*itemfound.getNumTraded()/itemfound.getNumStacks()));
-					pi.addItem(itemfound.getTraded());
+					Bukkit.getServer().getLogger().info("Entro1");
+					if (full!= 0){
+						itemfound.getTraded().setAmount((full*itemfound.getNumTraded()/itemfound.getNumStacks()));
+						pi.addItem(itemfound.getTraded());
+					}
 				}else{
+					Bukkit.getServer().getLogger().info("Entro2");
 					itemfound.getTraded().setAmount(((full-1)*itemfound.getNumTraded()/itemfound.getNumStacks()));
 					pi.addItem(itemfound.getTraded());
 					itemfound.getTrade().setAmount(64*(full%itemfound.getNumStacks()));
