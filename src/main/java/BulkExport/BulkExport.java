@@ -129,7 +129,7 @@ public class BulkExport extends JavaPlugin{
     					sender.sendMessage("This command can only be run by a player.");
     				}else{
     					sender.sendMessage("These are the trades available:");
-    					String toret="";
+    					//String toret="";
     					for (Exportable trade:items){
     						if (trade.getTrade().hasItemMeta()){
     							if (trade.getTraded().hasItemMeta()){
@@ -137,15 +137,51 @@ public class BulkExport extends JavaPlugin{
     								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + trade.getTrade().getItemMeta().getDisplayName() + " for " + trade.getNumTraded() + " " + trade.getTraded().getItemMeta().getDisplayName());
     							}else{
     								// Nome custom solo Trade
-    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + trade.getTrade().getItemMeta().getDisplayName() + " for " + trade.getNumTraded() + " " + Items.itemByStack(trade.getTraded()).getName());
+    								String tradedname;
+    								try{
+    									tradedname = Items.itemByStack(trade.getTraded()).getName();
+    								}catch (NullPointerException e){
+    									tradedname = "null";
+    								}
+    								if (tradedname=="null"){
+    									tradedname = trade.getTraded().getItemMeta().getDisplayName();
+    								}
+    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + trade.getTrade().getItemMeta().getDisplayName() + " for " + trade.getNumTraded() + " " + tradedname);
     							}
     						}else{
     							if (trade.getTraded().hasItemMeta()){
     								// Nome Custom Solo Traded
-    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + Items.itemByStack(trade.getTrade()) + " for " + trade.getNumTraded() + " " + trade.getTraded().getItemMeta().getDisplayName());
+    								String tradename;
+    								try{
+    									tradename = Items.itemByStack(trade.getTrade()).getName();
+    								}catch (NullPointerException e){
+    									tradename="null";
+    								}
+									if (tradename=="null"){
+										tradename = trade.getTrade().getItemMeta().getDisplayName();
+									}
+    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + tradename + " for " + trade.getNumTraded() + " " + trade.getTraded().getItemMeta().getDisplayName());
     							}else{
     								// No Nome Custom
-    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + Items.itemByStack(trade.getTrade()) + " for " + trade.getNumTraded() + " " + Items.itemByStack(trade.getTraded()).getName());
+    								String tradedname;
+    								try{
+    									tradedname = Items.itemByStack(trade.getTraded()).getName();
+    								}catch(NullPointerException e){
+    									tradedname = "null";
+    								}
+    								if (tradedname=="null"){
+    									tradedname = trade.getTraded().getType().toString();
+    								}
+    								String tradename;
+    								try{
+    									tradename = Items.itemByStack(trade.getTrade()).getName();
+    								}catch(NullPointerException e){
+    									tradename = "null";
+    								}
+    								if (tradename=="null"){
+    									tradename = trade.getTrade().getType().toString();
+    								}
+    								sender.sendMessage("Trade " + trade.getNumStacks() + "x" + trade.getStackSize() + " " + tradename + " for " + trade.getNumTraded() + " " + tradedname);
     							}
     						}
     					}
