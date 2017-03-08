@@ -8,6 +8,7 @@ import java.util.Set;
 import net.milkbowl.vault.item.*;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -128,9 +129,22 @@ public class BulkExport extends JavaPlugin{
     				if (!(sender instanceof Player)){
     					sender.sendMessage("This command can only be run by a player.");
     				}else{
-    					sender.sendMessage("These are the trades available:");
+    					int page = 1;
+    					if (args.length == 1){
+    						page = Integer.parseInt(args[0]);
+    					}
+    					if (page > Math.ceil(items.size() / 10.0) || page < 1){
+    						sender.sendMessage(ChatColor.GOLD + "This page doesn't exist.");
+    						return true;
+    					}
+    					sender.sendMessage(ChatColor.GOLD + "----------<>----------");
+    					sender.sendMessage(ChatColor.GOLD + "Trades available - Page " + page + "/" + (int) Math.ceil(items.size()/10.0)+":");
     					//String toret="";
-    					for (Exportable trade:items){
+    					//for (Exportable trade:items){
+    					int i=0;
+    					for (i = ((page-1)* 10); i < Math.min(items.size(), page*10); i++){
+    						getLogger().info("Index: " + i + " Array Length: " + items.size());
+    						Exportable trade = items.get(i);
     						if (trade.getTrade().hasItemMeta()){
     							if (trade.getTraded().hasItemMeta()){
     								// Doppio Nome Custom
@@ -185,6 +199,10 @@ public class BulkExport extends JavaPlugin{
     							}
     						}
     					}
+    					if (i < items.size()){
+    						sender.sendMessage(ChatColor.GOLD + "Type " + ChatColor.DARK_PURPLE + "/trades " + (page + 1) + ChatColor.GOLD + " to see more trades.");
+    					}
+    					sender.sendMessage(ChatColor.GOLD + "----------<>----------");
     				} return true;
     			}
     		}
