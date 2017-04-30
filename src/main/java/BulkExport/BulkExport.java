@@ -143,7 +143,7 @@ public class BulkExport extends JavaPlugin{
     					//for (Exportable trade:items){
     					int i=0;
     					for (i = ((page-1)* 10); i < Math.min(items.size(), page*10); i++){
-    						getLogger().info("Index: " + i + " Array Length: " + items.size());
+    						//getLogger().info("Index: " + i + " Array Length: " + items.size());
     						Exportable trade = items.get(i);
     						if (trade.getTrade().hasItemMeta()){
     							if (trade.getTraded().hasItemMeta()){
@@ -263,13 +263,13 @@ public class BulkExport extends JavaPlugin{
 					}
 				}
 				if (full%itemfound.getNumStacks()==0){
-					Bukkit.getServer().getLogger().info("Entro1");
+					//Bukkit.getServer().getLogger().info("Entro1");
 					if (full!= 0){
 						itemfound.getTraded().setAmount((full*itemfound.getNumTraded()/itemfound.getNumStacks()));
 						pi.addItem(itemfound.getTraded());
 					}
 				}else{
-					Bukkit.getServer().getLogger().info("Entro2");
+					//Bukkit.getServer().getLogger().info("Entro2");
 					itemfound.getTraded().setAmount(((full-1)*itemfound.getNumTraded()/itemfound.getNumStacks()));
 					pi.addItem(itemfound.getTraded());
 					itemfound.getTrade().setAmount(64*(full%itemfound.getNumStacks()));
