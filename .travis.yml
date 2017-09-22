@@ -1,0 +1,10 @@
+language: java
+deploy:
+  provider: releases
+  api_key:
+    secure: P1Dwse7F+ajrPg94GU77jxaGjuOUtlpGNmZPcymHw907BqUrfmyOAECdCZqxttz0wsQpzUqmDkkHrfFqwbMO4VTNNHzWMHiE47beO0oyEKunBysdiNcxQkX7GV9DMvYX5CYXUpuxXJlHaBzaX0H9Fl7wmSrii1xOhLhyUZKy49l6epluaGrxN+KCfcCdR34pY1cEizxC9IfANz/rHonmCocxGWLWR5dLp7mfuT5uPALcbaRruKn8hOw//5oZUbDdxdPmVufapBpdAcdUqAxJw4/jYUhJ6NnPwXNHZqT0pNq1b4iHu0NK14eNeBKK3rqu0+iBwuqGrVLmRXSrjR3+PdcW+xyODvcfjinj/qckPrlAvXG/AWa9Y1Cl8jDkF+ZxrK7FjAjAp9KzzWhQikvz0x+ytbPrv3MHd76UBoSGCGKBFVufB+Ikmumeya15gECHWzLJqjkYAB08F+LqPZaOP/ZMK0Rbz7oSfWHcd+0HszGYiJQfUv1b00JcIB+7i/2q7NPA67aBzgyhmGJJLacBbvhONXSlfDhr/Hr0mtI3GN6BeI/BMVPIuMOHfOifm1zd6cnHGuJl4cNI5rwj7yiGVevVTjm7P6ck1scxq2nyk3pOHJVtsOxCV04UXvzmYziEJ/yK4muiZoiEz/jrCyfFu/Nvl4CQ0W1qY2/KCp/jdTI=
+  file: target/BulkExport-0.0.1-SNAPSHOT.jar
+  on:
+    repo: Penaz91/BulkExport
+  skip_cleanup: true
+  name: 0.0.2 Build $(date +'%d/%m/%Y %R')

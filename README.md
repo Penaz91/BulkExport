@@ -1,5 +1,7 @@
 #BulkExport
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/Penaz91/BulkExport.svg?branch=master)](https://travis-ci.org/Penaz91/BulkExport)
+
 A Small Bulk Trading plugin for Minecraft
 
 ##Commands
