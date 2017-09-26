@@ -9,15 +9,15 @@ import org.bukkit.inventory.Inventory;
 public final class InventoryListener implements Listener {
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event){
-		try{
-			String playername=event.getPlayer().getName();
-			Inventory invo=BulkExport._chests.get(playername);
-			String invoname=invo.getName();
-			if (event.getInventory().getName()==invoname){	
-				BulkExport.Handle((Player) event.getPlayer());
-			}
-		} catch (NullPointerException e){
-			System.out.println("There has been an exception");
+		if (!BulkExport._chests.containsKey(event.getPlayer().getName())){
+			//Inventory Gui not created yet, return
+			return;
+		}
+		String playername=event.getPlayer().getName();
+		Inventory invo=BulkExport._chests.get(playername);
+		String invoname=invo.getName();
+		if (event.getInventory().getName()==invoname){	
+			BulkExport.Handle((Player) event.getPlayer());
 		}
 	}
 }
